@@ -1,13 +1,11 @@
 {
-  "name": "lucky-card-draw-telegram-bot",
-  "version": "1.0.0",
-  "description": "Telegram bot for 54-player Lucky Card Draw poker — 5 tables, 30s timer, EN/AM bilingual",
+  "name": "lucky-card-draw-bot-v2",
+  "version": "2.0.0",
+  "description": "Lucky Card Draw Telegram Bot v2 — Real multiplayer, accounts, 5 cards, winner effects, EN/AM",
   "main": "bot.js",
-  "scripts": {
-    "start": "node bot.js",
-    "dev": "node bot.js"
-  },
+  "scripts": { "start": "node bot.js" },
   "dependencies": {
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "lowdb": "^1.0.0"
   }
 }
