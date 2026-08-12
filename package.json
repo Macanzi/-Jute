@@ -1,11 +1,10 @@
 {
-  "name": "lucky-card-draw-bot-v2",
-  "version": "2.0.0",
-  "description": "Lucky Card Draw Telegram Bot v2 — Real multiplayer, accounts, 5 cards, winner effects, EN/AM",
+  "name": "lucky-card-draw-bot-v3",
+  "version": "3.0.0",
+  "description": "Lucky Card Draw Telegram Bot v3 — Balance system, coins, birr economy, shuffle animation, admin account",
   "main": "bot.js",
   "scripts": { "start": "node bot.js" },
   "dependencies": {
-    "node-telegram-bot-api": "^0.66.0",
-    "lowdb": "^1.0.0"
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
