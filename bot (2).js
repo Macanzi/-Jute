@@ -1245,7 +1245,7 @@ const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Lucky Card Bot is running!\n');
-}).listen(PORT, () => {
+}).listen(PORT, '0.0.0.0', () => {
   console.log(`Health-check server listening on port ${PORT}`);
 });
 // 
