@@ -8,7 +8,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const db = require('./database/database');
 // ─── HTTP keep-alive server for Render ───────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-
+const http = require('http');
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Lucky Card Bot is running!\n');
