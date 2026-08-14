@@ -6,6 +6,16 @@
 
 const TelegramBot = require('node-telegram-bot-api');
 const db = require('./database/database');
+// ─── HTTP keep-alive server for Render ───────────────────────────────────────
+const PORT = process.env.PORT || 3000;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Lucky Card Bot is running!\n');
+}).listen(PORT, '0.0.0.0', () => {
+  console.log(`Health-check server listening on port ${PORT}`);
+});
+// 
 
 const TOKEN = process.env.BOT_TOKEN || 'PUT_YOUR_BOT_TOKEN_HERE';
 const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || null;
@@ -1239,13 +1249,3 @@ console.log(`
 } // end setupBotHandlers
 
 module.exports = { startBot };
-// ─── HTTP keep-alive server for Render ───────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-
-http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Lucky Card Bot is running!\n');
-}).listen(PORT, '0.0.0.0', () => {
-  console.log(`Health-check server listening on port ${PORT}`);
-});
-// 
