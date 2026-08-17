@@ -11,6 +11,7 @@ const TOKEN = process.env.BOT_TOKEN || 'PUT_YOUR_BOT_TOKEN_HERE';
 const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || null;
 const API_SECRET = process.env.API_SECRET_KEY || 'bot_api_secret';
 const SELF_API_URL = process.env.SELF_API_URL || `http://localhost:${process.env.PORT || 3000}`;
+const BOT_USERNAME_ENV = process.env.BOT_USERNAME || ''; // optional override, auto-fetched if blank
 
 // ---- Economy Config ----
 const CARD_COST_BIRR     = 10;
@@ -80,8 +81,9 @@ function apiGet(path) {
 }
 
 let bot = null;
+let BOT_USERNAME = BOT_USERNAME_ENV; // will be set after bot.getMe()
 
-function startBot() {
+async function startBot() {
   if (TOKEN === 'PUT_YOUR_BOT_TOKEN_HERE') {
     console.error('❌ BOT_TOKEN not set — bot will not start.');
     return;
@@ -94,6 +96,16 @@ function startBot() {
       params: { timeout: 10 },
     },
   });
+
+  // ---- Auto-fetch bot username ----
+  try {
+    const me = await bot.getMe();
+    BOT_USERNAME = me.username;
+    console.log(`🤖 Bot username: @${BOT_USERNAME}`);
+    console.log(`🔗 Bot link: https://t.me/${BOT_USERNAME}`);
+  } catch (e) {
+    console.error('⚠️  Could not fetch bot username:', e.message);
+  }
 
   // ---- Set up bot menu commands (visible in Telegram menu) ----
   bot.setMyCommands([
@@ -113,8 +125,28 @@ function startBot() {
     { command: 'support',       description: '📞 Contact support' },
   ]).catch(() => {});
 
+  // ---- Set the Menu Button URL (the ▶️ button in Telegram chat) ----
+  // This makes the bottom-left menu button open your bot directly
+  if (BOT_USERNAME) {
+    try {
+      await bot.setChatMenuButton({
+        menu_button: {
+          type: 'web_app',
+          text: '🎮 Play Now',
+          web_app: { url: `https://t.me/${BOT_USERNAME}` },
+        },
+      });
+      console.log('✅ Telegram Menu Button set to bot link');
+    } catch (e) {
+      // Some versions of node-telegram-bot-api don't support setChatMenuButton
+      // That's fine — commands still work perfectly
+      console.log('ℹ️  Menu button API not available (bot still works fine)');
+    }
+  }
+
   setupBotHandlers();
   console.log('✅ Telegram bot started with 14 menu commands!\n');
+  console.log(`📌 Share this link with players: https://t.me/${BOT_USERNAME}\n`);
 }
 
 // ============================================================
@@ -636,14 +668,22 @@ bot.onText(/\/start(.*)/, async (msg, match) => {
   const user = await db.getOrCreateUser(chatId, msg.from.username, msg.from.first_name);
   const lang = user.lang || 'en';
   const text = tr(lang, 'welcome');
+
+  // Build inline keyboard — include a real URL button so Telegram
+  // shows an actual link users can share / tap to open the game
+  const gameUrl = `https://t.me/${BOT_USERNAME || 'luckycarddrawbot'}`;
+  const keyboard = { inline_keyboard: [
+    // URL button — this is what Telegram expects as a "game URL"
+    [{ text: '🎮 ' + (lang==='am'?'ጨዋታ ጀምር':'Open Game'), url: gameUrl }],
+    [{ text: '📝 ' + (lang==='am'?'ይመዝገቡ':'Register'), callback_data: 'register' }],
+    [{ text: '🎮 ' + (lang==='am'?'ጠረጴዛ ይምረጡ':'Play Now'), callback_data: 'play' },
+     { text: '💳 ' + (lang==='am'?'ቀሪ':'Balance'), callback_data: 'balance' }],
+    [{ text: '🌍 Language / ቋንቋ', callback_data: 'pickLang' }],
+  ]};
+
   await bot.sendMessage(chatId, text, {
     parse_mode: 'Markdown',
-    reply_markup: { inline_keyboard: [
-      [{ text: '📝 ' + (lang==='am'?'ይመዝገቡ':'Register'), callback_data: 'register' }],
-      [{ text: '🎮 ' + (lang==='am'?'ይጫወቱ':'Play'), callback_data: 'play' },
-       { text: '💳 ' + (lang==='am'?'ቀሪ':'Balance'), callback_data: 'balance' }],
-      [{ text: '🌍 Language / ቋንቋ', callback_data: 'pickLang' }],
-    ]},
+    reply_markup: keyboard,
   });
 });
 
@@ -818,8 +858,8 @@ bot.onText(/\/invite/, async (msg) => {
   const chatId = msg.chat.id;
   const user = await db.getUser(chatId);
   const lang = user ? (user.lang || 'en') : 'en';
-  const me = await bot.getMe();
-  await bot.sendMessage(chatId, tr(lang, 'invite', { botUsername: me.username, userId: chatId }), {parse_mode:'Markdown'});
+  // Use cached BOT_USERNAME (set at startup) — no extra API call needed
+  await bot.sendMessage(chatId, tr(lang, 'invite', { botUsername: BOT_USERNAME, userId: chatId }), {parse_mode:'Markdown'});
 });
 
 // 13. /rules — Game rules
