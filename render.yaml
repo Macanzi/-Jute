@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: lucky-card-platform
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_CHAT_ID
+        sync: false
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: API_SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lucky-card-db
+          property: connectionString
+      - key: SELF_API_URL
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+
+databases:
+  - name: lucky-card-db
+    databaseName: lucky_card_db
+    user: lucky_card_user
+    plan: free
