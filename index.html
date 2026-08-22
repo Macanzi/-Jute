@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🃏 Lucky Card Draw</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ LOADING ══════ -->
+<div id="loadingScreen" class="screen active">
+  <div class="loading-center">
+    <div class="logo-anim">🃏</div>
+    <h1>Lucky Card Draw</h1>
+    <div class="spinner"></div>
+    <p id="loadingMsg">Connecting...</p>
+  </div>
+</div>
+
+<!-- ══════ NOT REGISTERED ══════ -->
+<div id="registerScreen" class="screen">
+  <div class="center-content">
+    <div class="big-icon">📝</div>
+    <h2>Register First</h2>
+    <p>You need to register before playing.<br>
+       Go to the bot and send <strong>/register</strong></p>
+    <button class="btn btn-primary" onclick="openBot()">↗ Open Bot</button>
+  </div>
+</div>
+
+<!-- ══════ MAIN SCREEN ══════ -->
+<div id="mainScreen" class="screen">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-name" id="headerName">Player</div>
+      <div class="header-balance">
+        💳 <span id="headerBalance">0.00</span> Birr
+        &nbsp;·&nbsp;
+        🪙 <span id="headerCoins">0</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn spinning-on-click" onclick="refreshAll()" id="refreshBtn" title="Refresh">🔄</button>
+      <button class="icon-btn" onclick="openBot()" title="Open Bot">💬</button>
+    </div>
+  </header>
+
+  <!-- TABLE TABS BAR -->
+  <div class="tabs-bar">
+    <div class="tabs-scroll" id="tabsBar">
+      <!-- Tab 0 = "All Tables" overview -->
+      <button class="tab-btn active" id="tab-btn-all" onclick="switchTab('all')">
+        <span class="tab-icon">📋</span> All Tables
+      </button>
+      <!-- Table 1-5 tabs injected by JS -->
+    </div>
+  </div>
+
+  <!-- ── ALL-TABLES OVERVIEW PANEL ── -->
+  <div class="table-panel active" id="panel-all">
+    <div class="overview-header">
+      <div class="overview-title">🃏 Choose a Table</div>
+      <div class="overview-sub">Join multiple tables and play simultaneously!</div>
+    </div>
+    <div id="overviewCards"><!-- injected --></div>
+  </div>
+
+  <!-- ── PER-TABLE PANELS (1 per table, injected by JS) ── -->
+  <div id="tablesContainer"><!-- injected --></div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- WIN POPUP -->
+<div id="winOverlay" class="win-overlay hidden" onclick="closeWinOverlay()">
+  <div class="win-box" onclick="event.stopPropagation()">
+    <div class="win-confetti" id="winConfetti"></div>
+    <div class="win-emoji" id="winEmoji">🥇</div>
+    <div class="win-title" id="winTitle">You Won!</div>
+    <div class="win-amount" id="winAmount">+0 Birr</div>
+    <div class="win-table" id="winTable">Table 1</div>
+    <button class="btn btn-gold" onclick="closeWinOverlay()">Awesome! 🎉</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
