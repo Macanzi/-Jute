@@ -112,7 +112,7 @@ async function startBot() {
   try {
     // Explicitly reset to default menu_button (type: default)
     await bot.setChatMenuButton({
-      menu_button: { type: 'default' }
+      menu_button: { type: 'commands' }
     });
     console.log('📋 Menu button set to default (shows command list)');
   } catch (e) {
